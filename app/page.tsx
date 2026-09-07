@@ -31,6 +31,11 @@ export default async function DirectoryPage({
           Apartment reviews written by Illinois students, scored on the things that decide whether a
           lease was a mistake: maintenance, communication, and value.
         </p>
+        <p className="mt-6 border-l-2 border-accent bg-accent-dim px-3 py-2 text-sm">
+          <strong className="font-semibold">Prototype.</strong> Ratings below are computed from
+          sample reviews written to demonstrate the site, not from real tenants.
+        </p>
+
         <div className="mt-8">
           <SearchBox filters={filters} />
         </div>
