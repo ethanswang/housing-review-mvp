@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   UIUC Housing Review — "student paper data desk"
+   Newsprint ground, Illini navy ink, Illini orange as the one sharp accent.
+   Editorial rules and tabular density over cards-on-grey.
+--------------------------------------------------------------------------- */
+
+@theme {
+  --color-paper:      #f7f4ed;
+  --color-paper-card: #fffdf8;
+  --color-ink:        #13294b;
+  --color-ink-soft:   #4a5568;
+  --color-muted:      #7d766a;
+  --color-rule:       #ddd6c8;
+  --color-rule-soft:  #ebe5d9;
+  --color-accent:     #ff5f05;
+  --color-accent-dim: #ffe4d1;
+  --color-good:       #2f6f4f;
+  --color-mid:        #b0762d;
+
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-body:    var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    var(--font-plex-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  /* Paper grain. Subtle enough to read as texture, not noise. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* Small-caps mono label used for every piece of metadata on the site. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Editorial double rule, used under the masthead. */
+.rule-double {
+  border-bottom: 3px double var(--color-ink);
+}
+
+/* Numerals in scores and prices should line up column to column. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Staggered entrance for the directory list. One orchestrated load beats
+   scattered micro-interactions. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.rise {
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise { animation: none; }
+  * { transition-duration: 0.01ms !important; }
+}
+
+/* Focus ring that matches the accent rather than the browser default. */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
