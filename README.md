@@ -4,8 +4,14 @@ A free, student-run housing review site for the University of Illinois. Students
 Champaign–Urbana apartments and management companies on **maintenance**, **communication**,
 and **value**, and those ratings roll up into scores you can filter and compare.
 
+**Live demo: https://housing-review-mvp.vercel.app**
+
 Built in response to [a request from an r/UIUC moderator](./request.txt) for a free housing
 review site for UIUC students.
+
+> **This is a prototype.** The reviews in it are synthetic sample data, clearly labeled in the
+> UI, and the site is set to `noindex` so those ratings don't reach search results. See
+> [Sample data](#sample-data) below.
 
 ---
 
