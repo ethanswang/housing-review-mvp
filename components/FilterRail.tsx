@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { buildQuery, hasActiveFilters } from '@/lib/filters'
 import type { Company, PropertyFilters } from '@/lib/types'
 
@@ -22,6 +22,19 @@ export function FilterRail({ filters, options }: { filters: PropertyFilters; opt
   // Local mirror so the rent slider tracks the thumb while the server catches up.
   const [rent, setRent] = useState(filters.maxRent ?? options.maxRent)
 
+  // On a phone the rail would otherwise push every property below the fold, so
+  // it collapses into a disclosure. On desktop it is always open and the
+  // summary is hidden. Starts closed on both so the server and client agree on
+  // the first render, then opens on desktop once we can measure the viewport.
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1024px)')
+    const sync = () => setOpen(desktop.matches)
+    sync()
+    desktop.addEventListener('change', sync)
+    return () => desktop.removeEventListener('change', sync)
+  }, [])
+
   function apply(next: PropertyFilters) {
     const query = buildQuery(next)
     startTransition(() => router.push(query ? `/?${query}` : '/', { scroll: false }))
@@ -36,21 +49,32 @@ export function FilterRail({ filters, options }: { filters: PropertyFilters; opt
 
   return (
     <aside
-      className={`flex flex-col gap-7 transition-opacity ${isPending ? 'opacity-60' : 'opacity-100'}`}
+      className={`transition-opacity ${isPending ? 'opacity-60' : 'opacity-100'}`}
       aria-busy={isPending}
     >
-      <div className="flex items-baseline justify-between border-b border-ink pb-2">
-        <h2 className="font-display text-xl">Refine</h2>
-        {hasActiveFilters(filters) && (
-          <button
-            type="button"
-            onClick={() => apply({ sort: filters.sort })}
-            className="label hover:text-accent"
-          >
-            Clear all
-          </button>
-        )}
-      </div>
+      <details
+        open={open}
+        onToggle={(event) => setOpen(event.currentTarget.open)}
+        className="border-b border-ink lg:border-b-0"
+      >
+        <summary className="flex cursor-pointer list-none items-baseline justify-between py-2 lg:hidden [&::-webkit-details-marker]:hidden">
+          <h2 className="font-display text-xl">Refine</h2>
+          <span className="label">{open ? 'Hide' : 'Filter & sort'}</span>
+        </summary>
+
+        <div className="flex flex-col gap-7 pb-6 lg:pb-0">
+          <div className="hidden items-baseline justify-between border-b border-ink pb-2 lg:flex">
+            <h2 className="font-display text-xl">Refine</h2>
+            {hasActiveFilters(filters) && (
+              <button
+                type="button"
+                onClick={() => apply({ sort: filters.sort })}
+                className="label hover:text-accent"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
 
       <Group title="Sort by">
         <select
@@ -127,6 +151,18 @@ export function FilterRail({ filters, options }: { filters: PropertyFilters; opt
           })}
         </div>
       </Group>
+
+          {hasActiveFilters(filters) && (
+            <button
+              type="button"
+              onClick={() => apply({ sort: filters.sort })}
+              className="label self-start border border-rule px-3 py-2 hover:border-ink hover:text-accent lg:hidden"
+            >
+              Clear all filters
+            </button>
+          )}
+        </div>
+      </details>
     </aside>
   )
 }
